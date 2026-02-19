@@ -1,0 +1,44 @@
+.column {
+  flex: 1;
+  min-width: 280px;
+  max-width: 360px;
+
+  background: #f3f4f6; // светлый фон
+  border-radius: 12px;
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+  // чтобы карточки не вываливались
+  max-height: 75vh;
+  overflow-y: auto;
+
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+
+  // когда над колонкой держат таску
+  &.dragOver {
+    background: #e0e7ff;
+    box-shadow: 0 0 0 2px #6366f1 inset;
+  }
+
+  // скролл аккуратный
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c7c9d1;
+    border-radius: 4px;
+  }
+}
+
+.columnTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #374151;
+}
