@@ -1,41 +1,74 @@
 .column {
-  flex: 1;
-  min-width: 280px;
-  max-width: 360px;
-
-  background: #f3f4f6; // светлый фон
-  border-radius: 12px;
+  min-height: 200px;
   padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px dashed rgba(222, 226, 230, 0.4);
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-
-  // чтобы карточки не вываливались
-  max-height: 75vh;
-  overflow-y: auto;
-
-  transition: background 0.2s ease, box-shadow 0.2s ease;
-
-  // когда над колонкой держат таску
-  &.dragOver {
-    background: #e0e7ff;
-    box-shadow: 0 0 0 2px #6366f1 inset;
-  }
-
-  // скролл аккуратный
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #c7c9d1;
-    border-radius: 4px;
+  &:hover {
+    border-color: rgba(0, 123, 255, 0.5);
+    box-shadow: 0 6px 25px rgba(0, 123, 255, 0.15);
   }
 }
 
+.header {
+  margin: 0 0 16px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e0e0ff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.taskCount {
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  color: #c0c0ff;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100px;
+}
+
+.sortableItem {
+  transition: all 0.18s ease;
+  border-radius: 8px;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.dragging {
+  opacity: 0.65;
+  scale: 1.02;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  border: 2px solid #a78bfa;
+  z-index: 10;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(173, 181, 189, 0.9);
+  font-style: italic;
+  font-size: 1.1rem;
+  background: rgba(248, 249, 250, 0.15);
+  border-radius: 12px;
+  margin-top: 16px;
+  border: 1px dashed rgba(173, 181, 189, 0.4);
+}
 .columnTitle {
   font-size: 18px;
   font-weight: 600;

@@ -1,44 +1,91 @@
 import { store } from "../app/store"
-import { addTaskFromWS } from "../components/task/taskSlice"
-import { Task } from "../components/task/types"
+import { addTaskFromWS, moveTask, deleteTask } from "../components/task/taskSlice"
+import type { Task } from "../components/task/types"
+
+export type NewTask = {
+  id: string
+  title: string
+  description: string
+  status: "todo" | "in-progress" | "done"
+  priority: "low" | "medium" | "high"
+  createdAt: number
+}
+
+type WSMessage =
+  | { type: "CREATE_TASK"; task: NewTask }
+  | { type: "MOVE_TASK"; taskId: string; newStatus: Task["status"] }
+  | { type: "DELETE_TASK"; taskId: string }
 
 class TaskSocket {
   private ws: WebSocket | null = null
-  private url: string
   private reconnectTimeout = 1000
-  private listeners: ((data: any) => void)[] = []
+  private boardId: string | null = null
+  private listeners: ((data: WSMessage) => void)[] = []
 
-  constructor(url: string) {
-    this.url = url
-    this.connect()
+  constructor() {}
+
+  // === Новый метод: подключение к комнате ===
+  connect(boardId: string) {
+    this.boardId = boardId
+    this.openSocket()
   }
 
-  private connect() {
-    this.ws = new WebSocket(this.url)
+  // === Новый метод: отключение ===
+  disconnect() {
+    if (this.ws) {
+      this.ws.onclose = null
+      this.ws.close()
+      this.ws = null
+    }
+  }
+
+  private getUrl() {
+    const state = store.getState()
+    const token = state.auth.accessToken
+
+    if (!token || !this.boardId) return null
+
+    return `ws://localhost:3000/ws?token=${token}&room=${this.boardId}`
+  }
+
+  private openSocket() {
+    const url = this.getUrl()
+    if (!url) {
+      console.warn("WS: no token or boardId, waiting...")
+      setTimeout(() => this.openSocket(), 500)
+      return
+    }
+
+    this.ws = new WebSocket(url)
 
     this.ws.onopen = () => {
-      console.log("WS connected")
+      console.log("WS CONNECTED to room:", this.boardId)
       this.reconnectTimeout = 1000
     }
 
     this.ws.onmessage = (event) => {
-        const task: Task = JSON.parse(event.data)
+      const data: WSMessage = JSON.parse(event.data)
 
-        console.log("WS RECEIVED:", task)
-        store.dispatch(addTaskFromWS(task))
+      switch (data.type) {
+        case "CREATE_TASK":
+          store.dispatch(addTaskFromWS(data.task))
+          break
 
+        case "MOVE_TASK":
+          store.dispatch(moveTask({ taskId: data.taskId, newStatus: data.newStatus }))
+          break
 
+        case "DELETE_TASK":
+          store.dispatch(deleteTask(data.taskId))
+          break
+      }
 
-      // if (data.event === "taskUpdated") store.dispatch(updateTaskFromWS(data.task))
-      // if (data.event === "taskDeleted") store.dispatch(deleteTaskFromWS(data.id))
-
-
-      this.listeners.forEach(fn => fn(task))
+      this.listeners.forEach(fn => fn(data))
     }
 
     this.ws.onclose = () => {
-      console.log("WS disconnected, reconnecting...")
-      setTimeout(() => this.connect(), this.reconnectTimeout)
+      console.log("WS DISCONNECTED, reconnecting...")
+      setTimeout(() => this.openSocket(), this.reconnectTimeout)
       this.reconnectTimeout = Math.min(this.reconnectTimeout * 2, 10000)
     }
 
@@ -47,7 +94,7 @@ class TaskSocket {
     }
   }
 
-  send(data: any) {
+  send(data: WSMessage) {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
       console.warn("WS NOT OPEN, message not sent:", data)
       return
@@ -56,12 +103,13 @@ class TaskSocket {
     this.ws.send(JSON.stringify(data))
   }
 
-  subscribe(fn: (data: any) => void) {
+  subscribe(fn: (data: WSMessage) => void) {
     this.listeners.push(fn)
   }
 }
 
-export const taskSocket = new TaskSocket("ws://localhost:3000/ws")
+export const taskSocket = new TaskSocket()
+
 if (typeof window !== "undefined") {
   // @ts-ignore
   window.taskSocket = taskSocket

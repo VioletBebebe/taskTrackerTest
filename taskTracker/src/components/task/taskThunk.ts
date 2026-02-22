@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Task } from "./types";
 
-export const createTask = createAsyncThunk(
+export const loginUser = createAsyncThunk(
   "create/task",
   async ({ task }: { task: Task }) => {
     const res = await fetch("http://localhost:3000/tasks", {
@@ -17,7 +17,7 @@ export const createTask = createAsyncThunk(
   }
 );  
 
-export const deleteTask = createAsyncThunk(
+export const deleteUser = createAsyncThunk(
   "delete/task",
   async ( id: string ) => {
     const res = await fetch("http", {

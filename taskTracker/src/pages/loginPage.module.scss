@@ -1,0 +1,282 @@
+
+
+:root {
+  overflow: hidden;
+
+  --accent-pink: #ff79c6;        
+  --accent-purple: #c084fc;    
+  --accent-blue: #7dd3fc;     
+  --text-glow: #e0bbff;           
+  --error-pink: #ff8fab;          
+  --card-bg: rgba(30, 20, 60, 0.68);    
+  --border-glow: rgba(192, 132, 252, 0.28);
+  --shadow-glow: rgba(192, 132, 252, 0.45);
+  --placeholder: rgba(224, 187, 255, 0.65);
+}
+
+.login {
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #1a0d2b 0%, #2b0d3f 40%, #0d1e3a 100%);
+  background-image: url("../assets/your-name-couple-3840x2160-25439.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  overflow: hidden;
+  position: relative;
+
+  @media only screen and (-webkit-min-device-pixel-ratio: 2),
+         only screen and (min-resolution: 192dpi),
+         only screen and (min-resolution: 2dppx) {
+    background-image: url('../assets/your-name-couple-3840x2160-25439.jpg');
+  }
+
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 15% 25%, rgba(255, 121, 198, 0.14) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(126, 91, 239, 0.11) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.loginCard {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: var(--card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 28px;
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6),
+              inset 0 0 60px rgba(192, 132, 252, 0.09);
+  overflow: hidden;
+  z-index: 2;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.loginHeader {
+  padding: 36px 32px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .loginHeaderTitle {
+    margin: 0;
+    font-size: 2.3rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #ff79c6, #c084fc, #7dd3fc, #c084fc, #ff79c6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 16px rgba(192, 132, 252, 0.6);
+    letter-spacing: -0.4px;
+  }
+
+  .loginHeaderSubtitle {
+    margin: 14px 0 8px;
+    color: #d5c0ff;
+    font-size: 1.05rem;
+    opacity: 0.94;
+  }
+}
+
+.formFieldHint {
+  font-size: 0.84rem;
+  margin-top: 6px;
+  display: flex;
+  min-height: 1.25em;
+
+  &.formFieldHintError {
+    color: var(--error-pink);
+    text-shadow: 0 0 10px rgba(255, 143, 171, 0.5);
+  }
+}
+
+.loginSwitchBar {
+  padding: 0 32px 24px;
+  text-align: center;
+}
+
+.loginSwitchBtn {
+  background: linear-gradient(90deg, #ff79c6, #c084fc, #7dd3fc, #c084fc);
+  background-size: 200% 100%;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: all 0.45s ease;
+  box-shadow: 0 4px 20px rgba(192, 132, 252, 0.35);
+
+  &:hover {
+    background-position: 100% 0;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 12px 32px rgba(192, 132, 252, 0.55);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  &[aria-pressed="true"] {
+    background: linear-gradient(90deg, #ff79c6, #d19bfe, #a5d6ff);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+
+.loginViewport {
+  position: relative;
+  overflow: hidden;
+  height: 340px;
+  width: 440px;          
+  transition: height 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login.isRegister .loginViewport {
+  height: 420px;
+}
+
+.loginTrack {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start; 
+  transition: transform 0.65s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform;
+}
+
+.login.isRegister .loginTrack {
+  transform: translateX(-440px);
+}
+
+.loginSlide {
+  display: flex;
+  width: 440px;
+  flex-shrink: 0;
+  transition: opacity 0.5s ease;
+}
+
+.loginSlide[aria-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.loginForm {
+  padding-top: 40px;
+  width: 440px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.loginFormRow {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 28px;
+  flex-grow: 1;
+}
+
+.formField {
+  position: relative;
+}
+
+.formFieldInput {
+  width: 260px;
+  padding: 15px 18px;
+  font-size: 1.05rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(192, 132, 252, 0.32);
+  border-radius: 14px;
+  color: #f0e6ff;
+  transition: all 0.3s ease;
+  outline: none;
+
+  &::placeholder {
+    color: var(--placeholder);
+  }
+
+  &:focus {
+    border-color: #c084fc;
+    box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &.formFieldInputError {
+    border-color: #ff8fab;
+    box-shadow: 0 0 0 4px rgba(255, 143, 171, 0.22);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.loginFormActions {
+  margin-top: auto;
+  padding-top: 16px;
+  padding-bottom: 32px;
+}
+
+.btnPrimary {
+  width: 260px;
+  padding: 17px;
+  margin-top: 15px;
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(90deg, #ff79c6, #c084fc, #7dd3fc, #c084fc, #ff79c6);
+  background-size: 300% 100%;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.6s ease;
+  box-shadow: 0 10px 30px rgba(192, 132, 252, 0.5);
+
+  animation: gradientFlow 7s linear infinite;
+
+  &:hover {
+    background-position: 100% 0;
+    transform: translateY(-3px);
+    box-shadow: 0 18px 44px rgba(192, 132, 252, 0.7);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 20px rgba(192, 132, 252, 0.4);
+  }
+
+  &:disabled {
+    background: #4a356b;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    opacity: 0.65;
+  }
+}
+
+@keyframes gradientFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

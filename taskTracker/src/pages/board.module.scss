@@ -1,0 +1,226 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  color: white;
+  font-family: 'Comfortaa', 'Segoe UI', sans-serif;
+}
+
+.header {
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.navBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.title {
+  margin-bottom: 24px;
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #a78bfa, #7dd3fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
+}
+
+.listSection,
+.boardSection {
+  max-width: 100%;
+}
+
+.createForm {
+  margin-bottom: 32px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.input {
+  padding: 14px 18px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: white;
+  flex: 1;
+  min-width: 280px;
+  backdrop-filter: blur(8px);
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  &:focus {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+  }
+}
+
+.btn {
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.createBtn {
+  background: linear-gradient(90deg, #7c3aed, #3b82f6);
+  color: white;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+  }
+}
+
+.btnDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.boardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.boardCard {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.boardTitle {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #e0e0ff;
+}
+
+.emptyText {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 80px 0;
+  font-size: 1.3rem;
+  font-style: italic;
+}
+
+.inviteBox {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+}
+
+.inviteRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.inviteBtn {
+  background: linear-gradient(90deg, #28a745, #20c997);
+  color: white;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.45);
+  }
+}
+
+.errorMsg {
+  color: #ff6b6b;
+  margin-top: 12px;
+}
+
+.successMsg {
+  color: #51cf66;
+  margin-top: 12px;
+}
+
+.taskForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+  align-items: center;
+}
+
+.addBtn {
+  background: linear-gradient(90deg, #7c3aed, #3b82f6);
+  color: white;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+  }
+}
+
+.kanbanContainer {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  min-height: calc(100vh - 220px); // чтобы занимало почти весь экран
+}
+
+// Адаптив
+@media (max-width: 768px) {
+  .taskForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kanbanContainer {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
