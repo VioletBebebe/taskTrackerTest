@@ -1,107 +1,80 @@
-// src/features/profile/profileSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import type { RootState } from "../../../../app/store";
 
-export interface UserProfile {
-  username: string;
-  displayName?: string;           // на случай, если захочешь отдельно от username
-  avatar: string;                 // url
-  banner?: string;                // url или null/undefined
-  status?: string;
-  role: 'member' | 'admin' | 'owner'; // можно расширить
-  nameGradient?: string;          // "linear-gradient(135deg, #7efaff, #fea2ba)"
-  gradientColor1?: string;        // #7efaff    ← удобно для редактирования
-  gradientColor2?: string;        // #fea2ba
-  updatedAt?: string;             // ISO строка, для отображения "последнее обновление"
-  // можно добавить позже: theme?: 'light' | 'dark' | 'custom';
-  // bio?: string;
-  // socialLinks?: { twitter?: string; discord?: string };
+export interface Profile {
+
+  avatar: string;
+  banner?: string;
+  status: string;
+  nameGradient?: string;
+  role?: "member" | "admin";
 }
 
 interface ProfileState {
-  currentProfile: UserProfile | null;
-  isLoading: boolean;
+  currentProfile: Profile | null;
+  loading: boolean;
   error: string | null;
-  // participants: Record<string, UserProfile>;   ← если захочешь кэшировать всех участников доски
 }
 
 const initialState: ProfileState = {
   currentProfile: null,
-  isLoading: false,
+  loading: false,
   error: null,
 };
 
+// Универсальный thunk: создаёт или обновляет профиль
+export const saveUserProfile = createAsyncThunk<
+  Profile,
+  { boardId: string; formData: FormData },
+  { state: RootState }
+>(
+  "profile/saveUserProfile",
+  async ({ boardId, formData }, { getState, rejectWithValue }) => {
+    const accessToken = getState().auth.accessToken;
+    if (!accessToken) return rejectWithValue("Отсутствует токен");
+
+    const res = await fetch(`http://localhost:3004/boards/${boardId}/profile`, {
+      method: "POST", // сервер сам решает create/update
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      return rejectWithValue(err || "Ошибка сохранения профиля");
+    }
+
+    return (await res.json()) as Profile;
+  }
+);
+
 const profileSlice = createSlice({
-  name: 'profile',
+  name: "profile",
   initialState,
   reducers: {
-    // Устанавливаем профиль полностью (при логине / загрузке доски)
-    setCurrentProfile(state, action: PayloadAction<UserProfile>) {
+    updateCurrentProfile: (state, action: PayloadAction<Profile>) => {
       state.currentProfile = action.payload;
-      state.error = null;
     },
-
-    // Частичное обновление (оптимистичные обновления + после успешного запроса)
-    updateCurrentProfile(state, action: PayloadAction<Partial<UserProfile>>) {
-      if (state.currentProfile) {
-        state.currentProfile = {
-          ...state.currentProfile,
-          ...action.payload,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-    },
-
-    // Сброс при логауте / выходе из доски
-    clearProfile(state) {
+    clearCurrentProfile: (state) => {
       state.currentProfile = null;
-      state.error = null;
     },
-
-    // Для индикации загрузки (если используешь async thunks)
-    setProfileLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
-    },
-
-    setProfileError(state, action: PayloadAction<string | null>) {
-      state.error = action.payload;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(saveUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(saveUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentProfile = action.payload;
+      })
+      .addCase(saveUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-// Экспортируем actions
-export const {
-  setCurrentProfile,
-  updateCurrentProfile,
-  clearProfile,
-  setProfileLoading,
-  setProfileError,
-} = profileSlice.actions;
-
-// Селекторы (удобно использовать в useAppSelector)
-export const selectCurrentProfile = (state: { profile: ProfileState }) =>
-  state.profile.currentProfile;
-
-export const selectProfileLoading = (state: { profile: ProfileState }) =>
-  state.profile.isLoading;
-
-export const selectProfileError = (state: { profile: ProfileState }) =>
-  state.profile.error;
-
-export const selectHasAdminRights = (state: { profile: ProfileState }) =>
-  state.profile.currentProfile?.role === 'admin' ||
-  state.profile.currentProfile?.role === 'owner';
-
-// Пример: готовый градиент с fallback-ом
-export const selectNameGradient = (state: { profile: ProfileState }) => {
-  const p = state.profile.currentProfile;
-  if (!p) return 'linear-gradient(90deg, #7efaff, #fea2ba)';
-
-  if (p.nameGradient) return p.nameGradient;
-
-  // fallback на отдельные цвета, если строка не пришла
-  const c1 = p.gradientColor1 || '#7efaff';
-  const c2 = p.gradientColor2 || '#fea2ba';
-  return `linear-gradient(135deg, ${c1} 0%, ${c2} 50%, ${c1} 100%)`;
-};
-
+export const { updateCurrentProfile, clearCurrentProfile } = profileSlice.actions;
 export default profileSlice.reducer;
