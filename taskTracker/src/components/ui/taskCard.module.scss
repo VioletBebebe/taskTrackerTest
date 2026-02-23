@@ -1,129 +1,312 @@
-// taskCard.module.scss
-
 .wrapper {
-  background: rgba(30, 30, 60, 0.75);           // полупрозрачный тёмный фон
-  backdrop-filter: blur(10px);                   // эффект стекла
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  color: white;
-  transition: all 0.25s ease;
-  cursor: grab;
-  user-select: none;
   position: relative;
+  width: 100%;
+  min-height: 180px;
+  padding: 20px 18px 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0f1c40 0%, #1a0f2e 100%);
+  border: 1px solid rgba(120, 200, 255, 0.35);
+  box-shadow: 
+    0 6px 28px rgba(0, 0, 0, 0.55),
+    inset 0 0 45px rgba(100, 180, 255, 0.15);
+  color: #e8f4ff;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
   overflow: hidden;
+  box-sizing: border-box;
+}
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(138, 43, 226, 0.15) 0%,
-      rgba(0, 255, 255, 0.08) 50%,
-      transparent 100%
-    );
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+.wrapper:hover {
+  transform: translateY(6px) ;
+  box-shadow: 
+    0 16px 48px rgba(0, 100, 255, 0.5),
+    inset 0 0 60px rgba(140, 220, 255, 0.22);
+  border-color: rgba(160, 220, 255, 0.65);
+}
+
+.wrapper.dragging {
+  opacity: 0.75;
+  transform: scale(1.07) rotate(2.5deg);
+  box-shadow: 0 30px 70px rgba(0, 120, 255, 0.75);
+  z-index: 100;
+}
+
+.wrapper.overlay {
+  opacity: 0.45;
+  filter: blur(3px);
+}
+
+.wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 110px;
+  height: 110px;
+  background: url("../../assets/march.svg") center/contain no-repeat;
+  opacity: 0.25;
+  transform: rotate(-18deg) scale(0.9);
+  pointer-events: none;
+  filter: drop-shadow(0 0 20px rgba(160, 240, 255, 0.8));
+  transition: all 0.5s ease;
+}
+
+.wrapper:hover::after {
+  opacity: 0.55;
+  transform: rotate(-8deg) scale(1.05) translate(12px, -12px);
+}
+
+.wrapper::before,
+.wrapper > .sparkle {
+  position: absolute;
+  font-size: 1.3rem;
+  color: #b0e8ff;
+  text-shadow: 0 0 12px #e0f8ff, 0 0 24px #c0e0ff;
+  pointer-events: none;
+  opacity: 0.6;
+  animation: sparkle-float 6s infinite ease-in-out;
+  z-index: 1;
+}
+
+.wrapper::before {
+  content: "❄";
+  top: 15%;
+  left: 12%;
+  animation-delay: 0s;
+  color: #a0f0ff;
+}
+
+.wrapper > .sparkle:nth-child(1) {
+  content: "✦";
+  top: 22%;
+  right: 14%;
+  animation-delay: 1s;
+  color: #ffd0f8;
+}
+
+.wrapper > .sparkle:nth-child(2) {
+  content: "❅";
+  bottom: 28%;
+  left: 16%;
+  animation-delay: 2.2s;
+  color: #c0ffff;
+}
+
+.wrapper > .sparkle:nth-child(3) {
+  content: "✧";
+  top: 35%;
+  left: 20%;
+  animation-delay: 3.5s;
+  color: #b0d8ff;
+}
+
+.wrapper > .sparkle:nth-child(4) {
+  content: "★";
+  bottom: 22%;
+  right: 18%;
+  animation-delay: 4.8s;
+  color: #ffcae8;
+}
+
+@keyframes sparkle-float {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateY(0) scale(0.85) rotate(0deg);
   }
-
-  &:hover::before {
+  50% {
     opacity: 1;
+    transform: translateY(-35px) scale(1.45) rotate(180deg);
   }
 }
 
-// Состояние перетаскивания
-.dragging {
-  opacity: 0.65;
-  scale: 0.98;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-  border: 2px solid #a78bfa;
-  z-index: 10;
-}
-
-// Оверлей (летающая карточка)
-.overlay {
-  opacity: 0.9;
-  scale: 1.06;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-  border: 2px solid #7c3aed;
-  background: rgba(40, 40, 80, 0.85);
-}
-
-// Заголовок
 .title {
-  margin: 0 0 12px 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #e0e0ff;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #90d8ff, #e8f8ff, #ffd8f8, #a8e0ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 16px rgba(160, 220, 255, 0.85);
+  letter-spacing: 0.7px;
 }
 
-// Описание
 .description {
-  margin: 0 0 16px 0;
-  color: #c0c0ff;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  margin: 0 0 14px;
+  font-size: 0.96rem;
+  line-height: 1.5;
+  color: #c8e0ff;
+  opacity: 0.92;
 }
 
-// Метаданные (приоритет + дата)
 .meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.9rem;
-  color: #b0b0ff;
-  margin-bottom: 12px;
+  margin: 12px 0;
+  font-size: 0.84rem;
+  color: #b0d0ff;
 }
 
-// Приоритет с цветами
 .priority {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-
-.priority-low {
-  background: rgba(40, 167, 69, 0.25);
-  color: #28a745;
-}
-
-.priority-medium {
-  background: rgba(255, 193, 7, 0.25);
-  color: #ffc107;
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  background: rgba(90, 150, 255, 0.28);
+  border: 1px solid rgba(140, 200, 255, 0.5);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 12px rgba(120, 200, 255, 0.35);
 }
 
 .priority-high {
-  background: rgba(220, 53, 69, 0.25);
-  color: #dc3545;
+  background: linear-gradient(90deg, #ff70a8, #ff9ed0);
+  color: white;
+  box-shadow: 0 0 16px rgba(255, 120, 200, 0.75);
 }
 
-// Дата
+.priority-medium {
+  background: linear-gradient(90deg, #ffe080, #fff0b0);
+  color: #1e1e40;
+  box-shadow: 0 0 14px rgba(255, 230, 120, 0.65);
+}
+
+.priority-low {
+  background: linear-gradient(90deg, #80ffd0, #b0ffe8);
+  color: #0f2a20;
+  box-shadow: 0 0 14px rgba(120, 255, 220, 0.55);
+}
+
 .date {
-  color: #a0a0ff;
+  opacity: 0.78;
 }
 
-// Автор
 .author {
-  font-size: 0.9rem;
-  color: #d0d0ff;
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  .authorLabel {
-    opacity: 0.8;
-  }
+  font-size: 0.86rem;
+  color: #b8d0ff;
+  margin-top: 10px;
 }
 
-// Заглушка "не найдена"
-.notFound {
-  color: #999;
-  text-align: center;
-  font-style: italic;
+.authorLabel {
+  opacity: 0.72;
+  margin-right: 6px;
+}
+
+.author strong {
+  color: #e8f4ff;
+  text-shadow: 0 0 8px rgba(160, 220, 255, 0.6);
+}
+
+.actions {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.wrapper:hover .actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.actions button {
+  padding: 7px 14px;
+  font-size: 0.84rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: rgba(100, 160, 255, 0.3);
+  color: #e8f4ff;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+}
+
+.actions button:hover {
+  background: rgba(140, 200, 255, 0.5);
+  transform: scale(1.06);
+  box-shadow: 0 0 14px rgba(140, 200, 255, 0.7);
+}
+
+.actions button:active {
+  transform: scale(0.96);
+}
+
+.editInput,
+.editTextarea,
+.editSelect {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(160, 220, 255, 0.45);
+  background: rgba(20, 35, 70, 0.75);
+  color: #f8faff;
+  font-family: inherit;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+
+.editInput::placeholder,
+.editTextarea::placeholder,
+.editSelect::placeholder {
+  color: rgba(200, 230, 255, 0.65);
+}
+
+.editInput:focus,
+.editTextarea:focus,
+.editSelect:focus {
+  outline: none;
+  border-color: #a0e0ff;
+  box-shadow: 0 0 18px rgba(160, 220, 255, 0.6);
+  background: rgba(30, 55, 100, 0.85);
+}
+
+.editTextarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.editSelect {
+  padding: 12px 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%23a0e0ff' d='M3 5l4 4 4-4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+.editButtons {
+  display: flex;
+  gap: 14px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.editButtons button {
+  padding: 9px 18px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.editButtons button:first-child {
+  background: linear-gradient(90deg, #80c8ff, #a8e8ff);
+  color: #0f1e3a;
+  box-shadow: 0 5px 14px rgba(100, 200, 255, 0.6);
+}
+
+.editButtons button:last-child {
+  background: rgba(255, 110, 190, 0.3);
+  color: #ffe0f0;
+}
+
+.editButtons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(100, 200, 255, 0.7);
 }

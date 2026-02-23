@@ -1,26 +1,26 @@
 import { createBrowserRouter } from "react-router"
 import LoginPage from "../pages/loginPage"
 import { ProtectedRoute } from "../pages/protectedRoute"
-import { BoardsDashboard } from "../pages/createBoardPage"
-
+import { CreateBoardsPage } from "../pages/createBoardPage"
+import { BoardPage } from "../pages/board/board"
 export const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />
   },
   {
-    path: "/boards",
+    path: "/",
     element: (
       <ProtectedRoute>
-        <BoardsDashboard />
+        <CreateBoardsPage />
       </ProtectedRoute>
     )
   },
   {
-    path: "/boards/:boardId",
+    path: "/:boardId",
     element: (
       <ProtectedRoute>
-        <BoardsDashboard />
+        <BoardPage />
       </ProtectedRoute>
     )
   }

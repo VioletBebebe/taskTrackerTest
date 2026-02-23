@@ -7,8 +7,9 @@ export interface Task {
   createdAt: number;
   userName: string;
   userId: string;
-  boardId?: string;
+  boardId: string;           // теперь обязательно!
 }
+
 
 export interface TaskState {
   components: Record<string, Task>;

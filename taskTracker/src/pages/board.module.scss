@@ -1,226 +1,649 @@
-.container {
-  display: flex;
-  flex-direction: column;
+.enchantedForestContainer {
+  position: relative;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-  color: white;
-  font-family: 'Comfortaa', 'Segoe UI', sans-serif;
+  background: linear-gradient(180deg, #0d1b3a 0%, #1a0f2e 100%);
+  color: #e8f4ff;
+  padding: 20px 28px 40px;
+  overflow: hidden;
 }
 
-.header {
-  padding: 16px 24px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+.forestBackdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  pointer-events: none;
 }
 
-.nav {
+.firefliesLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: #a0e0ff;
+  box-shadow: 0 0 8px 3px #a0e0ff,
+              0 0 18px 6px #ffd0f8,
+              0 0 32px 10px rgba(160,224,255,0.6);
+  opacity: 0.75;
+  width: var(--size, 7px);
+  height: var(--size, 7px);
+  animation: randomDrift var(--duration, 18s) linear infinite,
+             fairyTwinkle 2.8s ease-in-out infinite;
+  animation-delay: var(--delay, 0s), 0s;
+  left: calc(var(--i, 1) * 7% + var(--offset-x, 0%));
+  top: calc(var(--top-start, 10%) + var(--offset-y, 0%));
+}
+
+@keyframes randomDrift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(calc(var(--tx, 0px) * 0.4), calc(var(--ty, 0px) * 0.3)) rotate(calc(var(--rot, 0deg) * 0.5)); }
+  50% { transform: translate(var(--tx, 0px), var(--ty, 0px)) rotate(var(--rot, 0deg)); }
+  75% { transform: translate(calc(var(--tx, 0px) * 0.6), calc(var(--ty, 0px) * -0.4)) rotate(calc(var(--rot, 0deg) * -0.8)); }
+}
+
+@keyframes fairyTwinkle {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+.mistLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2000;
+}
+
+.mistLayer::before,
+.mistLayer::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -20%;
+  right: -20%;
+  height: 70vh;
+  background: radial-gradient(ellipse at 50% 100%, rgba(200,230,255,0.22) 0%, transparent 70%);
+  animation: slowWave 42s ease-in-out infinite,
+             pulseDensity 18s ease-in-out infinite alternate;
+}
+
+.mistLayer::after {
+  left: -30%;
+  right: -30%;
+  height: 55vh;
+  background: radial-gradient(ellipse at 30% 100%, rgba(255,208,248,0.16) 0%, transparent 80%);
+  animation: slowWave 56s ease-in-out infinite reverse,
+             pulseDensity 24s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes slowWave {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  50% { transform: translateX(12%) scaleX(1.08); }
+}
+
+@keyframes pulseDensity {
+  0% { opacity: 0.65; }
+  100% { opacity: 0.85; }
+}
+
+.forestNav {
+  position: relative;
+  z-index: 10;
   display: flex;
   gap: 16px;
+  margin-bottom: 32px;
+  margin-left: 75px;
   flex-wrap: wrap;
 }
 
-.navBtn {
-  padding: 10px 20px;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.25s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-  }
+.forestNavBtn {
+  padding: 10px 22px;
+  background: rgba(20, 35, 70, 0.65);
+  border: 1px solid rgba(160,220,255,0.28);
+  border-radius: 14px;
+  color: #c8e0ff;
+  font-size: 1rem;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-.main {
-  flex: 1;
-  padding: 24px;
-  overflow-y: auto;
+.forestNavBtn:hover {
+  background: rgba(40, 60, 110, 0.8);
+  color: #e8f4ff;
+  box-shadow: 0 0 22px rgba(160,220,255,0.45);
+  transform: translateY(-2px);
 }
 
-.title {
-  margin-bottom: 24px;
+.forestTitle {
+  position: relative;
+  z-index: 5;
   font-size: 2.8rem;
   font-weight: 700;
-  background: linear-gradient(90deg, #a78bfa, #7dd3fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 15px rgba(167, 139, 250, 0.4);
-}
-
-.listSection,
-.boardSection {
-  max-width: 100%;
-}
-
-.createForm {
-  margin-bottom: 32px;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.input {
-  padding: 14px 18px;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  color: white;
-  flex: 1;
-  min-width: 280px;
-  backdrop-filter: blur(8px);
-
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.45);
-  }
-
-  &:focus {
-    border-color: #a78bfa;
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
-  }
-}
-
-.btn {
-  padding: 14px 28px;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.createBtn {
-  background: linear-gradient(90deg, #7c3aed, #3b82f6);
-  color: white;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
-  }
-}
-
-.btnDisabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.boardsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.boardCard {
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-    background: rgba(255, 255, 255, 0.1);
-  }
-}
-
-.boardTitle {
-  margin: 0;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #e0e0ff;
-}
-
-.emptyText {
-  grid-column: 1 / -1;
   text-align: center;
-  color: rgba(255, 255, 255, 0.55);
-  padding: 80px 0;
-  font-size: 1.3rem;
+  margin: 0 0 36px;
+  color: #e8f4ff;
+  text-shadow: 0 0 20px rgba(160,220,255,0.65),
+               0 4px 12px rgba(0,0,0,0.6);
+  letter-spacing: 1.5px;
+}
+
+.forestKanbanLayout {
+  margin-left: 70px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  position: relative;
+  z-index: 5;
+}
+
+.forestSidebar {
+  width: 340px;
+  flex-shrink: 0;
+  background: rgba(20, 35, 70, 0.82);
+  border: 1px solid rgba(160,220,255,0.22);
+  border-radius: 18px;
+  padding: 22px 18px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+  position: sticky;
+  top: 24px;
+  height: fit-content;
+}
+
+.magicForestTaskForm {
+  position: relative;
+  padding: 24px 22px;
+  background: linear-gradient(135deg, #1a2b50 0%, #2a1f40 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(160,220,255,0.18);
+  box-shadow: 
+    inset 0 0 50px rgba(100,180,255,0.35),
+    0 0 30px rgba(160,220,255,0.15);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.forestGlowWrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.fireflyLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 25% 35%, rgba(160,224,255,0.12) 0%, transparent 50%);
+  opacity: 0.6;
+  animation: gentlePulse 16s infinite alternate;
+}
+
+.forestInput,
+.forestTextarea {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  background: rgba(20, 35, 70, 0.65);
+  border: 1px solid rgba(160,220,255,0.25);
+  border-radius: 12px;
+  color: #e8f4ff;
+  font-size: 15px;
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.forestInput::placeholder,
+.forestTextarea::placeholder {
+  color: rgba(200,230,255,0.55);
   font-style: italic;
 }
 
-.inviteBox {
-  margin-bottom: 32px;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.05);
+.forestInput:focus,
+.forestTextarea:focus {
+  outline: none;
+  border-color: #a0e0ff;
+  box-shadow: 0 0 20px rgba(160,220,255,0.4);
+  background: rgba(30, 55, 100, 0.75);
+}
+
+.forestTextarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.customSelectWrapper {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.forestPrioritySelect {
+  width: 100%;
+  padding: 14px 18px;
+  padding-right: 46px;
+  background: rgba(20, 35, 70, 0.65);
+  border: 1px solid rgba(160,220,255,0.25);
+  border-radius: 12px;
+  color: #e8f4ff;
+  font-size: 15px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.selectArrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0e0ff;
+  font-size: 20px;
+  pointer-events: none;
+  text-shadow: 0 0 10px #a0e0ff;
+  transition: transform 0.3s;
+}
+
+.forestPrioritySelect:focus + .selectArrow {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.forestButton {
+  position: relative;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(90deg, #5ac8ff, #80c8ff, #a0e0ff);
+  border: none;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
+  color: #0f1e3a;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(100,200,255,0.5);
+  transition: all 0.35s ease;
+}
+
+.forestButton:hover:not(.disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 35px rgba(160,220,255,0.6);
+}
+
+.forestButton.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btnGlow {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 12px rgba(15,30,58,0.95);
+}
+
+.buttonLeaves {
+  position: absolute;
+  width: 100%;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 10%, transparent 70%) repeat;
+  opacity: 0.18;
+  pointer-events: none;
+  animation: leafSway 14s linear infinite;
+}
+
+.forestInviteForm {
+  background: rgba(20, 35, 70, 0.6);
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(160,220,255,0.15);
+}
+
+.sidebarTitle {
+  margin: 0 0 14px;
+  font-size: 1.35rem;
+  color: #a0e0ff;
+  text-shadow: 0 0 10px rgba(160,220,255,0.3);
 }
 
 .inviteRow {
   display: flex;
   gap: 12px;
-  margin-bottom: 16px;
-}
-
-.inviteBtn {
-  background: linear-gradient(90deg, #28a745, #20c997);
-  color: white;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.45);
-  }
-}
-
-.errorMsg {
-  color: #ff6b6b;
-  margin-top: 12px;
-}
-
-.successMsg {
-  color: #51cf66;
-  margin-top: 12px;
-}
-
-.taskForm {
-  display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 40px;
-  align-items: center;
 }
 
-.addBtn {
-  background: linear-gradient(90deg, #7c3aed, #3b82f6);
-  color: white;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
-  }
+.forestBtn,
+.forestCreateBtn,
+.forestInviteBtn {
+  padding: 12px 24px;
+  background: linear-gradient(90deg, #5ac8ff, #80c8ff);
+  border: none;
+  width: 100%;
+  border-radius: 12px;
+  color: #0f1e3a;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(100,200,255,0.4);
+  transition: all 0.3s;
 }
 
-.kanbanContainer {
+.forestBtn:hover:not(.disabled),
+.forestCreateBtn:hover:not(.disabled),
+.forestInviteBtn:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(160,220,255,0.55);
+}
+
+.forestBtn.disabled,
+.forestCreateBtn.disabled,
+.forestInviteBtn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.forestKanbanMain {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}
+
+.forestKanbanContainer {
   display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  padding-bottom: 24px;
-  min-height: calc(100vh - 220px); // чтобы занимало почти весь экран
+  margin-left: -20px;
+  gap: 16px;
+  padding: 0 8px 30px 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-// Адаптив
-@media (max-width: 768px) {
-  .taskForm {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.forestKanbanContainer::-webkit-scrollbar {
+  display: none;
+}
 
-  .kanbanContainer {
-    flex-direction: column;
-    gap: 16px;
-  }
+.forestRightSidebar {
+  width: 320px;
+  flex-shrink: 0;
+  background: rgba(20, 35, 70, 0.82);
+  border: 1px solid rgba(160,220,255,0.22);
+  border-radius: 18px;
+  padding: 22px 18px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+  position: sticky;
+  top: 24px;
+  height: fit-content;
+}
+
+.miniProfile {
+  background: rgba(26, 31, 74, 0.7);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(160,220,255,0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.profileBanner {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7) blur(2px);
+  z-index: 0;
+}
+
+.profileAvatarContainer {
+  position: relative;
+  z-index: 1;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(160,220,255,0.6);
+  box-shadow: 0 0 20px rgba(160,220,255,0.5);
+}
+
+.profileAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileDetails {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.profileDetails h3 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  color: #e8f4ff;
+  text-shadow: 0 0 10px rgba(160,220,255,0.6);
+}
+
+.profileStatus {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  color: #c8e0ff;
+  font-style: italic;
+}
+
+.profileRole {
+  font-size: 1rem;
+  color: #a0e0ff;
+  font-weight: 600;
+}
+
+.editProfileBtn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 10px;
+  background: rgba(160,220,255,0.25);
+  border: 1px solid rgba(160,220,255,0.5);
+  border-radius: 12px;
+  color: #e8f4ff;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.editProfileBtn:hover {
+  background: rgba(160,220,255,0.45);
+  box-shadow: 0 0 16px rgba(160,220,255,0.6);
+}
+
+.participantsSection {
+  background: rgba(26, 31, 74, 0.6);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(160,220,255,0.2);
+}
+
+.participantsTitle {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+  color: #a0e0ff;
+}
+
+.participantsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.participantItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: rgba(20, 35, 70, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(160,220,255,0.15);
+}
+
+.participantAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(160,220,255,0.4);
+}
+
+.participantInfo {
+  flex: 1;
+}
+
+.participantName {
+  font-weight: 600;
+  color: #e8f4ff;
+}
+
+.roleTag {
+  font-size: 0.85rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.adminRole {
+  background: rgba(255, 208, 248, 0.3);
+  color: #ffd0f8;
+}
+
+.memberRole {
+  background: rgba(160, 220, 255, 0.3);
+  color: #a0e0ff;
+}
+
+.roleSelect {
+  padding: 6px 10px;
+  background: rgba(20, 35, 70, 0.7);
+  border: 1px solid rgba(160,220,255,0.4);
+  border-radius: 8px;
+  color: #e8f4ff;
+  font-size: 0.9rem;
+}
+
+.profileModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileModal {
+  background: rgba(13, 27, 58, 0.92);
+  border-radius: 20px;
+  width: 480px;
+  max-width: 90%;
+  padding: 32px;
+  position: relative;
+  border: 1px solid rgba(160,220,255,0.4);
+  box-shadow: 0 0 60px rgba(160,220,255,0.5);
+  backdrop-filter: blur(12px);
+}
+
+.modalClose {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #c8e0ff;
+  cursor: pointer;
+}
+
+.modalBanner {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px 16px 0 0;
+  margin: -32px -32px 0;
+}
+
+.modalAvatarWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: -60px auto 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(160,220,255,0.6);
+  box-shadow: 0 0 30px rgba(160,220,255,0.6);
+}
+
+.modalAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modalUsername {
+  text-align: center;
+  font-size: 1.8rem;
+  margin: 0 0 20px;
+  color: #e8f4ff;
+  text-shadow: 0 0 12px rgba(160,220,255,0.7);
+}
+
+.modalField {
+  margin-bottom: 20px;
+}
+
+.modalField label {
+  display: block;
+  margin-bottom: 8px;
+  color: #c8e0ff;
+  font-size: 1rem;
+}
+
+.modalInput {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(20, 35, 70, 0.7);
+  border: 1px solid rgba(160,220,255,0.4);
+  border-radius: 12px;
+  color: #e8f4ff;
+  font-size: 1rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.saveBtn,
+.cancelBtn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.saveBtn {
+  background: linear-gradient(90deg, #80c8ff, #a8e8ff);
+  color: #0f1e3a;
+}
+
+.cancelBtn {
+  background: rgba(255, 110, 190, 0.4);
+  color: #ffe0f0;
+}
+
+.saveBtn:hover,
+.cancelBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(160,220,255,0.5);
 }

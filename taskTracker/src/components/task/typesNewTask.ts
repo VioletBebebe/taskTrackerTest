@@ -5,5 +5,6 @@ export interface NewTask {
   status: "todo" | "in-progress" | "done";
   priority: "low" | "medium" | "high";
   createdAt: number;
-  boardId?: string;
+  boardId: string;  
+  userName: string,         // обязательно
 }

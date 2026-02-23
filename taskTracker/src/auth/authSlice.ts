@@ -10,10 +10,12 @@ import {
 
 interface AuthState {
   accessToken: string | null;
-  user: any | null;
-  status: "idle" | "loading" | "succeeded" | "failed";
+  user: any | null;  // лучше заменить на User | null
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
-  initialized: boolean; // важно для автологина
+  initialized: boolean;
+  userName?: string | null;   // ← остаётся опциональным
+  userId?: string | null;     // ← если нужно
 }
 
 const initialState: AuthState = {
@@ -22,6 +24,7 @@ const initialState: AuthState = {
   status: "idle",
   error: null,
   initialized: false,
+  // НЕ пишем userName и userId — они undefined
 };
 
 const authSlice = createSlice({
@@ -46,17 +49,39 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     // LOGIN
     builder
-      .addCase(loginUser.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state) => {
-        state.status = "succeeded";
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message || "Login failed";
-      });
+    // LOGIN
+    .addCase(loginUser.pending, (state) => {
+      state.status = "loading";
+      state.error = null;
+    })
+    .addCase(loginUser.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      state.accessToken = action.payload.accessToken;
+      state.userName = action.payload.user?.name ?? null;
+      state.userId = action.payload.user?.id ?? null;
+      state.initialized = true;
+    })
+    .addCase(loginUser.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message || "Login failed";
+    })
+
+    // REFRESH (самая частая причина ошибки)
+    .addCase(refreshToken.pending, (state) => {
+      state.status = "loading";
+      state.error = null;
+    })
+    .addCase(refreshToken.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      state.accessToken = action.payload.accessToken;
+      state.userName = action.payload.user?.name ?? null;
+      state.userId = action.payload.user?.id ?? null;
+      state.initialized = true;
+    })
+    .addCase(refreshToken.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.error.message || "Refresh failed";
+    })
 
     // LOGOUT
     builder
@@ -66,19 +91,7 @@ const authSlice = createSlice({
         state.status = "idle";
       });
 
-    // REFRESH TOKEN
-    builder
-      .addCase(refreshToken.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(refreshToken.fulfilled, (state) => {
-        state.status = "succeeded";
-      })
-      .addCase(refreshToken.rejected, (state) => {
-        state.status = "failed";
-        state.accessToken = null;
-        state.user = null;
-      });
+    
 
     // UPDATE USER
     builder

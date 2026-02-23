@@ -24,8 +24,13 @@ export default function LoginPage() {
   const { user, status, error } = useAppSelector((s) => s.auth ?? { user: null, status: "idle", error: null });
 
   useEffect(() => {
-    if (user) navigate("/boards", { replace: true });
+    if (user) navigate("/", { replace: true });
   }, [user, navigate]);
+
+  // Очищаем ошибки при переключении режима
+  useEffect(() => {
+    setErrors({});
+  }, [isRegister]);
 
   const validateLogin = () => {
     const e: FormErrors = {};
@@ -57,7 +62,7 @@ export default function LoginPage() {
     } else if (cleanName.length < 2) {
       e.name = "Имя слишком короткое";
     } else if (!ONLY_ENG_LETTERS.test(cleanName)) {
-      e.name = "Имя должно содержать только английские буквы (A–Z)";
+      e.name = "Имя должно содержать только английские буквы";
     }
 
     if (!cleanEmail) {
@@ -90,7 +95,15 @@ export default function LoginPage() {
 
   const toggleMode = () => {
     setIsRegister((v) => !v);
+    // Очистка ошибок при смене режима
     setErrors({});
+  };
+
+  // Функция очистки ошибки при вводе
+  const clearErrorOnChange = (field: keyof FormErrors) => {
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
   };
 
   const loading = status === "loading";
@@ -109,12 +122,8 @@ export default function LoginPage() {
               : "Войдите, чтобы продолжить"}
           </p>
 
-          {error && (
-            <p className={`${styles.formFieldHint} ${styles.formFieldHintError}`}>
-              {error}
-            </p>
-          )}
         </div>
+
         <div className={styles.loginSwitchBar}>
           <button
             type="button"
@@ -129,6 +138,7 @@ export default function LoginPage() {
 
         <div className={styles.loginViewport} aria-live="polite">
           <div className={styles.loginTrack}>
+            {/* Форма входа */}
             <section
               className={styles.loginSlide}
               aria-hidden={isRegister}
@@ -146,7 +156,10 @@ export default function LoginPage() {
                     <input
                       className={`${styles.formFieldInput} ${errors.email ? styles.formFieldInputError : ""}`}
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        clearErrorOnChange("email"); // ← очищаем ошибку email при вводе
+                      }}
                       placeholder="Email"
                       type="email"
                       autoComplete="email"
@@ -164,7 +177,10 @@ export default function LoginPage() {
                     <input
                       className={`${styles.formFieldInput} ${errors.password ? styles.formFieldInputError : ""}`}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        clearErrorOnChange("password"); // ← очищаем ошибку пароля
+                      }}
                       placeholder="Пароль"
                       type="password"
                       autoComplete="current-password"
@@ -191,6 +207,7 @@ export default function LoginPage() {
               </form>
             </section>
 
+            {/* Форма регистрации */}
             <section
               className={styles.loginSlide}
               aria-hidden={!isRegister}
@@ -208,7 +225,10 @@ export default function LoginPage() {
                     <input
                       className={`${styles.formFieldInput} ${errors.name ? styles.formFieldInputError : ""}`}
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        clearErrorOnChange("name"); // ← очищаем ошибку имени
+                      }}
                       placeholder="Имя"
                       autoComplete="name"
                       required
@@ -225,7 +245,10 @@ export default function LoginPage() {
                     <input
                       className={`${styles.formFieldInput} ${errors.email ? styles.formFieldInputError : ""}`}
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        clearErrorOnChange("email");
+                      }}
                       placeholder="Email"
                       type="email"
                       autoComplete="email"
@@ -243,7 +266,10 @@ export default function LoginPage() {
                     <input
                       className={`${styles.formFieldInput} ${errors.password ? styles.formFieldInputError : ""}`}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        clearErrorOnChange("password");
+                      }}
                       placeholder="Пароль"
                       type="password"
                       autoComplete="new-password"
